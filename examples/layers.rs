@@ -39,10 +39,8 @@ fn startup(
 
     // Make 2 layers on "top" of the base map.
     for z in 0..2 {
-        let mut new_settings = map_settings.clone();
-        new_settings.set_layer_id(z + 1);
         let (mut layer_builder, layer_entity) =
-            LayerBuilder::new(&mut commands, new_settings, 0u16, z + 1);
+            LayerBuilder::new(&mut commands, map_settings.clone(), 0u16, z + 1);
 
         let mut random = thread_rng();
 

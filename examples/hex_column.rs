@@ -71,11 +71,10 @@ fn startup(
     map_query.build_layer(&mut commands, layer_builder, material_handle.clone());
 
     for z in 0..2 {
-        let mut new_settings = map_settings.clone();
-        new_settings.layer_id = z + 1;
+        let layer_id = z + 1;
         let (mut layer_builder, layer_entity) =
-            LayerBuilder::<TileBundle>::new(&mut commands, new_settings, 0u16, 0u16);
-        map.add_layer(&mut commands, z, layer_entity);
+            LayerBuilder::<TileBundle>::new(&mut commands, map_settings.clone(), 0u16, layer_id);
+        map.add_layer(&mut commands, layer_id, layer_entity);
 
         let mut random = thread_rng();
 

@@ -19,6 +19,8 @@ pub struct LayerBuilder<T> {
     pub settings: LayerSettings,
     pub(crate) tiles: Vec<(Entity, Option<T>)>,
     pub(crate) layer_entity: Entity,
+    pub map_id: u16,
+    layer_id: u16,
 }
 
 impl<T> LayerBuilder<T>
@@ -28,10 +30,14 @@ where
     /// Creates the layer builder using the layer settings.
     pub fn new<I: Into<u16>>(
         commands: &mut Commands,
-        mut settings: LayerSettings,
+        settings: LayerSettings,
         map_id: I,
         layer_id: I,
     ) -> (Self, Entity) {
+        // shadows arguments!
+        let layer_id = layer_id.into();
+        let map_id = map_id.into();
+
         let layer_entity = commands.spawn().id();
         let tile_size_x =
             round_to_power_of_two((settings.map_size.x * settings.chunk_size.x) as f32);
@@ -39,8 +45,6 @@ where
             round_to_power_of_two((settings.map_size.y * settings.chunk_size.y) as f32);
         let tile_count = tile_size_x * tile_size_y;
 
-        settings.set_map_id(map_id);
-        settings.set_layer_id(layer_id);
         (
             Self {
                 settings,
@@ -51,6 +55,8 @@ where
                     })
                     .collect(),
                 layer_entity,
+                layer_id,
+                map_id,
             },
             layer_entity,
         )
@@ -60,20 +66,21 @@ where
     /// Note: Limited to T(Bundle + TileBundleTrait) for what gets spawned.
     pub fn new_batch<I: Into<u16>, F: 'static + FnMut(UVec2) -> Option<T>>(
         commands: &mut Commands,
-        mut settings: LayerSettings,
+        settings: LayerSettings,
         meshes: &mut ResMut<Assets<Mesh>>,
         material_handle: Handle<ColorMaterial>,
         map_id: I,
         layer_id: I,
         mut f: F,
     ) -> Entity {
+        // shadows arguments!
+        let layer_id = layer_id.into();
+        let map_id = map_id.into();
+
         let layer_entity = commands.spawn().id();
 
         let size_x = settings.map_size.x * settings.chunk_size.x;
         let size_y = settings.map_size.y * settings.chunk_size.y;
-
-        settings.set_map_id(map_id);
-        settings.set_layer_id(layer_id);
 
         let mut layer = Layer::new(settings.clone());
         for x in 0..layer.settings.map_size.x {
@@ -100,7 +107,7 @@ where
                     settings.texture_size,
                     settings.tile_spacing,
                     mesh_handle.clone(),
-                    settings.layer_id,
+                    layer_id,
                     settings.mesh_type,
                     dyn_clone::clone_box(&*settings.mesher),
                     settings.cull,
@@ -127,8 +134,6 @@ where
 
         let ref_layer = &layer;
         let chunk_size = settings.chunk_size;
-        let layer_id = settings.layer_id;
-        let map_id = settings.map_id;
         let bundles: Vec<T> = (0..size_x)
             .flat_map(|x| (0..size_y).map(move |y| (x, y)))
             .filter_map(move |(x, y)| {
@@ -155,14 +160,13 @@ where
 
         let layer_bundle = LayerBundle {
             layer,
-            transform: Transform::from_xyz(0.0, 0.0, settings.layer_id as f32),
+            transform: Transform::from_xyz(0.0, 0.0, layer_id as f32),
             ..LayerBundle::default()
         };
 
-        let mut layer = layer_bundle.layer;
+        let layer = layer_bundle.layer;
         let mut transform = layer_bundle.transform;
-        layer.settings.layer_id = layer.settings.layer_id;
-        transform.translation.z = layer.settings.layer_id as f32;
+        transform.translation.z = layer_id as f32;
         commands.entity(layer_entity).insert_bundle(LayerBundle {
             layer,
             transform,
@@ -272,6 +276,11 @@ where
         }
     }
 
+    // Returns z translation (z-index) of LayerBuilder
+    pub fn get_z(&self) -> f32 {
+        self.layer_id as f32
+    }
+
     /// Retrieves a list of neighbors in the following order:
     /// N, S, W, E, NW, NE, SW, SE.
     ///
@@ -342,7 +351,7 @@ where
                     self.settings.texture_size,
                     self.settings.tile_spacing,
                     mesh_handle.clone(),
-                    self.settings.layer_id,
+                    self.layer_id,
                     self.settings.mesh_type,
                     dyn_clone::clone_box(&*self.settings.mesher),
                     self.settings.cull,
@@ -355,8 +364,8 @@ where
                         let tile_parent = tile_bundle.get_tile_parent();
                         *tile_parent = TileParent {
                             chunk: chunk_entity,
-                            layer_id: self.settings.layer_id,
-                            map_id: self.settings.map_id,
+                            layer_id: self.layer_id,
+                            map_id: self.map_id,
                         };
                         let tile_bundle_pos = tile_bundle.get_tile_pos_mut();
                         *tile_bundle_pos = tile_pos;
@@ -389,7 +398,7 @@ where
 
         LayerBundle {
             layer,
-            transform: Transform::from_xyz(0.0, 0.0, self.settings.layer_id as f32),
+            transform: Transform::from_xyz(0.0, 0.0, self.layer_id as f32),
             ..LayerBundle::default()
         }
     }

@@ -29,10 +29,6 @@ pub struct LayerSettings {
     pub tile_size: Vec2,
     /// Size in pixels of the tilemap texture.
     pub texture_size: Vec2,
-    /// The layer id associated with this map.
-    pub layer_id: u16,
-    /// The map id associated with this map.
-    pub map_id: u16,
     /// The meshing algorithm used for the tilemap.
     pub mesh_type: TilemapMeshType,
     /// Cull the chunks in the map when they are off screen.
@@ -50,21 +46,11 @@ impl LayerSettings {
             chunk_size,
             tile_size,
             texture_size,
-            layer_id: 0,
-            map_id: 0,
             cull: true,
             mesh_type: TilemapMeshType::Square,
             tile_spacing: Vec2::ZERO,
             mesher: Box::new(SquareChunkMesher),
         }
-    }
-
-    pub fn set_layer_id<T: Into<u16>>(&mut self, id: T) {
-        self.layer_id = id.into();
-    }
-
-    pub fn set_map_id<T: Into<u16>>(&mut self, id: T) {
-        self.map_id = id.into();
     }
 
     pub fn get_pixel_center(&self) -> Vec2 {
@@ -89,8 +75,6 @@ impl Clone for LayerSettings {
             chunk_size: self.chunk_size,
             tile_size: self.tile_size,
             texture_size: self.texture_size,
-            layer_id: self.layer_id,
-            map_id: self.map_id,
             mesh_type: self.mesh_type,
             tile_spacing: self.tile_spacing,
             cull: self.cull,
@@ -114,8 +98,6 @@ impl Default for Layer {
                 chunk_size: UVec2::default(),
                 tile_size: Vec2::default(),
                 texture_size: Vec2::default(),
-                layer_id: 0,
-                map_id: 0,
                 mesh_type: TilemapMeshType::Square,
                 tile_spacing: Vec2::default(),
                 cull: true,
