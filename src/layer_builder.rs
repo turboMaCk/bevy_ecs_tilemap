@@ -1,7 +1,5 @@
 use crate::{
     chunk::ChunkBundle,
-    layer::LayerId,
-    map::MapId,
     morton_index,
     render::TilemapUniformData,
     round_to_power_of_two,
@@ -34,9 +32,7 @@ where
     /// which will be used for rendering each chunk entity.
     pub fn new(
         commands: &mut Commands,
-        mut settings: LayerSettings,
-        map_id: impl MapId,
-        layer_id: impl LayerId,
+        settings: LayerSettings,
     ) -> (Self, Entity) {
         let layer_entity = commands.spawn().id();
         let tile_size_x =
@@ -44,9 +40,6 @@ where
         let tile_size_y =
             round_to_power_of_two((settings.map_size.1 * settings.chunk_size.1) as f32);
         let tile_count = tile_size_x.max(tile_size_y);
-
-        settings.set_map_id(map_id);
-        settings.set_layer_id(layer_id);
 
         (
             Self {
@@ -64,20 +57,15 @@ where
     /// which will be used for rendering each chunk entity.
     pub fn new_batch<F: FnMut(TilePos) -> Option<T>>(
         commands: &mut Commands,
-        mut settings: LayerSettings,
+        settings: LayerSettings,
         meshes: &mut ResMut<Assets<Mesh>>,
         material_handle: Handle<Image>,
-        map_id: impl MapId,
-        layer_id: impl LayerId,
         mut f: F,
     ) -> Entity {
         let layer_entity = commands.spawn().id();
 
         let size_x = settings.map_size.0 * settings.chunk_size.0;
         let size_y = settings.map_size.1 * settings.chunk_size.1;
-
-        settings.set_map_id(map_id);
-        settings.set_layer_id(layer_id);
 
         let mut layer = Layer::new(settings.clone());
         for x in 0..layer.settings.map_size.0 {

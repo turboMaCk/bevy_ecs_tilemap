@@ -22,7 +22,7 @@ fn startup(mut commands: Commands, asset_server: Res<AssetServer>, mut map_query
     layer_settings.tile_spacing = Vec2::new(1.0, 1.0);
 
     // Creates a new layer builder with a layer entity.
-    let (mut layer_builder, _) = LayerBuilder::new(&mut commands, layer_settings, 0u16, 0u16);
+    let (mut layer_builder, _) = LayerBuilder::new(&mut commands, layer_settings);
 
     // Set the texture for the tile
     // Note: the atlas is a 3x2, first row is 0..2 left to right

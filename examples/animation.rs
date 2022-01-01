@@ -25,7 +25,7 @@ fn startup(mut commands: Commands, asset_server: Res<AssetServer>, mut map_query
     );
 
     let (mut layer_builder, layer_0_entity) =
-        LayerBuilder::<TileBundle>::new(&mut commands, layer_settings.clone(), 0u16, 0u16);
+        LayerBuilder::<TileBundle>::new(&mut commands, layer_settings);
 
     layer_builder.set_all(Tile::default().into());
 
@@ -34,14 +34,15 @@ fn startup(mut commands: Commands, asset_server: Res<AssetServer>, mut map_query
     let texture_handle = asset_server.load("flower_sheet.png");
 
     let map_size = MapSize(map_size.0 / 2, map_size.1 / 2);
-    let layer_settings = LayerSettings::new(
+    let mut layer_settings = LayerSettings::new(
         map_size,
         ChunkSize(32, 32),
         TileSize(32.0, 32.0),
         TextureSize(32.0, 448.0),
     );
+    layer_settings.set_layer_id(1u16);
     let (mut layer_builder, layer_1_entity) =
-        LayerBuilder::<TileBundle>::new(&mut commands, layer_settings.clone(), 0u16, 1u16);
+        LayerBuilder::<TileBundle>::new(&mut commands, layer_settings);
 
     let mut random = thread_rng();
 

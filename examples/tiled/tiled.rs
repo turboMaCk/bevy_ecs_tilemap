@@ -187,13 +187,14 @@ pub fn process_loaded_tile_maps(
                             tiled::Orientation::Orthogonal => TilemapMeshType::Square,
                         };
 
+                        let mut settings = map_settings.clone();
+                        settings.set_layer_id(layer.layer_index as u16);
+
                         let layer_entity = LayerBuilder::<TileBundle>::new_batch(
                             &mut commands,
-                            map_settings.clone(),
+                            settings,
                             &mut meshes,
                             tiled_map.tilesets.get(&tileset.first_gid).unwrap().clone(),
-                            0u16,
-                            layer.layer_index as u16,
                             move |mut tile_pos| {
                                 if tile_pos.0 >= tiled_map.map.width
                                     || tile_pos.1 >= tiled_map.map.height

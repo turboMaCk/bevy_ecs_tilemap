@@ -38,7 +38,7 @@ fn startup(mut commands: Commands, asset_server: Res<AssetServer>, mut map_query
     let center = layer_settings.get_pixel_center();
 
     let (mut layer_builder, layer_entity) =
-        LayerBuilder::new(&mut commands, layer_settings, 0u16, 0u16);
+        LayerBuilder::new(&mut commands, layer_settings);
     map.add_layer(&mut commands, 0u16, layer_entity);
 
     layer_builder.set_all(TileBundle::default());

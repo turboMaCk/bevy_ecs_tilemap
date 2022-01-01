@@ -27,8 +27,6 @@ fn startup(
         ),
         &mut meshes,
         texture_handle,
-        0u16,
-        0u16,
         |_| Some(TileBundle::default()),
     );
 

@@ -22,7 +22,7 @@ fn startup(mut commands: Commands, asset_server: Res<AssetServer>, mut map_query
 
     // Layer 0
     let (mut layer_0, layer_0_entity) =
-        LayerBuilder::<TileBundle>::new(&mut commands, map_settings.clone(), 0u16, 0u16);
+        LayerBuilder::<TileBundle>::new(&mut commands, map_settings.clone());
     map.add_layer(&mut commands, 0u16, layer_0_entity);
 
     layer_0.fill(
@@ -67,12 +67,11 @@ fn startup(mut commands: Commands, asset_server: Res<AssetServer>, mut map_query
     // Make 2 layers on "top" of the base map.
     for z in 0..5 {
         let mut new_settings = map_settings.clone();
-        new_settings.layer_id = z + 1;
+        new_settings.set_layer_id(z + 1);
+
         let (mut layer_builder, layer_entity) = LayerBuilder::new(
             &mut commands,
             new_settings.clone(),
-            0u16,
-            new_settings.layer_id,
         );
         map.add_layer(&mut commands, new_settings.layer_id, layer_entity);
 

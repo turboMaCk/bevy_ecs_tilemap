@@ -66,11 +66,10 @@ impl<'w, 's> MapQuery<'w, 's> {
     /// It's important to know that the new tile wont exist until bevy flushes
     /// the commands during a hard sync point(between stages).
     /// A better option for updating existing tiles would be the following:
+    ///
     /// ```rust
-    /// ...
     /// mut my_tile_query: Query<&mut Tile>,
     /// mut map_query: MapQuery,
-    /// ...
     ///
     /// let tile_entity = map_query.get_tile_entity(tile_position, 0); // Zero represents layer_id.
     /// if let Ok(mut tile) = my_tile_query.get_mut(tile_entity) {

@@ -201,12 +201,11 @@ pub fn process_loaded_tile_maps(
                         TextureSize(tileset.px_wid as f32, tileset.px_hei as f32),
                     );
                     settings.set_layer_id(layer_id as u16);
+                    settings.set_map_id(map.id);
 
                     let (mut layer_builder, layer_entity) = LayerBuilder::<TileBundle>::new(
                         &mut commands,
                         settings,
-                        map.id,
-                        layer_id as u16,
                     );
 
                     let tileset_width_in_tiles = (tileset.px_wid / default_grid_size) as u32;

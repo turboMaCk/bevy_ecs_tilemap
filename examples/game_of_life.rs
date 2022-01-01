@@ -23,8 +23,6 @@ fn startup(mut commands: Commands, asset_server: Res<AssetServer>, mut map_query
             TileSize(16.0, 16.0),
             TextureSize(96.0, 16.0),
         ),
-        0u16,
-        0u16,
     );
 
     let mut i = 0;

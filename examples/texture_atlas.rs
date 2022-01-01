@@ -70,9 +70,7 @@ fn startup(
             ChunkSize(8, 8),
             TileSize(tile_size.x, tile_size.y),
             TextureSize(texture_atlas_size.x, texture_atlas_size.y),
-        ),
-        0u16,
-        0u16,
+        )
     );
     layer_builder.set_all(TileBundle::default());
 
